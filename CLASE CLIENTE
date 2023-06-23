@@ -1,0 +1,389 @@
+ARREGLOCLIENTE
+namespace Proyecto
+{
+    class ArregloCliente
+    {
+        //ATRIBUTOS
+        List<Cliente> cli;
+        //CONSTRUCTOR
+        public ArregloCliente() 
+        {
+            cli = new List<Cliente>();
+            ingresar(new Cliente(400, "Mayte", "Perez", "1234567", "Comas","03/08"));
+            ingresar(new Cliente(401, "Ana", "Castillo", "1234568", "Rimac", "12/04"));
+        }
+        public void ingresar(Cliente x)
+        {
+            cli.Add(x);
+        }
+        public void eliminar(Cliente x)
+        {
+            cli.Remove(x);
+        }
+        public int tamanio()
+        {
+            return cli.Count;
+        }
+        public Cliente obtener(int pos) 
+        { 
+            return cli[pos];
+        }
+        public int generarCodigo()
+        {
+            if (tamanio() == 0)
+            {
+                return 400;
+            }
+            else
+            {
+                return obtener(tamanio() - 1).Codest + 1;
+            }
+        }
+        public Cliente buscar(int cod)
+        {
+            Cliente x = null;
+            for (int i = 0; i < tamanio(); i++)
+            {
+                if (obtener(i).Codest == cod)
+                {
+                    return obtener(i);
+                };
+            }
+            return x;
+        }
+    }
+}
+CLIENTE
+namespace Proyecto
+{
+    class Cliente
+    {
+        private int codest;
+        private string nombre;
+        private string apellidos;
+        private string telefono;
+        private string fecha;
+        private string direccion;
+
+        public Cliente()
+        { 
+        }
+
+        public Cliente(int codest, string nombre, string apellidos, string telefono, string fecha, string direccion)
+        {
+            this.codest = codest;
+            this.nombre = nombre;
+            this.apellidos = apellidos;
+            this.telefono = telefono;
+            this.fecha = fecha;
+            this.direccion = direccion;
+        }
+        public int Codest 
+        {
+           get { return this.codest; }
+           set { this.codest = value; }
+        }
+        public string Nombre
+        { 
+            get { return this.nombre; } 
+            set { this.nombre = value; } 
+        }
+        public string Apellidos 
+        { 
+            get { return this.apellidos; }
+            set { this.apellidos = value; }
+        }
+        public string Telefono 
+        { 
+            get { return this.telefono; }
+            set { this.telefono = value; }   
+        }
+        public string Fecha 
+        { 
+            get { return this.fecha; }
+            set { this.fecha = value; }
+        }
+        public string Direccion 
+        { 
+            get { return this.direccion; }          
+            set { this.direccion = value;}
+        }
+
+    }
+}
+FORMULARIO AL DARLE AL BOTÓN BUSCAR
+namespace Proyecto
+{
+    public partial class FrmCliente : Form
+    {
+        ArregloCliente ac = new ArregloCliente();
+        int OPERACION = 0;
+        public FrmCliente()
+        {
+            InitializeComponent();
+            listar();
+        }
+
+        private void label8_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnbuscar_Click(object sender, EventArgs e)
+        {
+            consultar();
+            if (OPERACION == 3)
+            {
+                habilitarEntradas(true);
+                btnaceptar.Enabled = true;
+                txtcodigo.Enabled = false;
+            }
+            else if (OPERACION == 4)
+            {
+                btnaceptar.Enabled = true;
+            }
+        }
+        //CREAR VARIABLES GLOBALES
+        private void btningresar_Click(object sender, EventArgs e)
+        {
+            habilitarEntradas(true);
+            limpiar();
+            habilitarBotones(false);
+            txtcodigo.Text = ac.generarCodigo().ToString();
+            btnaceptar.Enabled = true;
+            btncancelar.Enabled = true;
+            OPERACION = 1;
+        }
+
+        //DEFINIR METODOS
+        //METODOS DE MANTENIMIENTO
+
+
+        //Mètodos de entrada
+        int leerCodigo()
+        {
+            return int.Parse(txtcodigo.Text);
+        }
+        string leerNombre()
+        {
+            return txtNombre.Text.Trim();
+        }
+        string leerApellidos()
+        {
+            return txtApellidos.Text.Trim();
+        }
+        string leerTelefono()
+        {
+            return txtTelefono.Text.Trim();
+        }
+        string leerFecha()
+        {
+            return txtFecha.Text.Trim();
+        }
+        string leerDireccion()
+        {
+            return txtDireccion.Text.Trim();
+        }
+
+        //Metodos de la GUI
+        void habilitarEntradas(bool act)
+        {
+            txtNombre.Enabled = act;
+            txtApellidos.Enabled = act;
+            txtTelefono.Enabled = act;
+            txtFecha.Enabled = act;
+            txtDireccion.Enabled = act;
+
+        }
+        void habilitarBotones(bool act)
+        {
+            btningresar.Enabled = act;
+            btnmodificar.Enabled = act;
+            btnconsultar.Enabled = act;
+            btneliminar.Enabled = act;
+            btnaceptar.Enabled = !act;
+            btncancelar.Enabled = !act;
+        }
+        void limpiar()
+        {
+            txtNombre.Clear();
+            txtApellidos.Clear();
+            txtTelefono.Clear();
+            txtFecha.Clear();
+            txtDireccion.Clear();
+            txtNombre.Focus();
+        }
+
+        //Otros Metodos
+        void mensaje(string msg)
+        {
+            MessageBox.Show(this, msg, "Aviso");
+        }
+        DialogResult confirmar(string msg)
+        {
+            return MessageBox.Show(this, msg, "Confirmar", MessageBoxButtons.YesNo);
+        }
+        private void btnAceptar_Click(object sender, EventArgs e)
+        {
+            if (OPERACION == 1)
+            {
+                ingresar();
+
+            }
+            else if (OPERACION == 3)
+            {
+                modificar();
+            }
+            else if (OPERACION == 4)
+            {
+                eliminar();
+            }
+        }
+        void ingresar()
+        {
+            int cod;
+            string nom, ape, tel, fec, dir;
+            cod = leerCodigo();
+            nom = leerNombre();
+            ape = leerApellidos();
+            if (nom.Length == 0)
+            {
+                mensaje("!!!Ingrese Nombre!!!");
+                txtNombre.Focus();
+            }
+            else if (ape.Length == 0)
+            {
+                mensaje("!!!Ingrese Apellidos!!!");
+                txtApellidos.Focus();
+            }
+            else
+            {
+                fec = leerFecha();
+                tel = leerTelefono();
+                dir = leerDireccion();
+                ac.ingresar(new Cliente(cod, nom, ape, tel, fec, dir));
+                listar();
+                limpiar();
+                txtcodigo.Text = ac.generarCodigo().ToString();
+            }
+
+        }
+        void modificar()
+        {
+            int cod = leerCodigo();
+            Cliente c = ac.buscar(cod);
+            if (c != null)
+            {
+                c.Nombre = leerNombre();
+                c.Apellidos = leerApellidos();
+                c.Telefono = leerTelefono();
+                c.Fecha = leerFecha();
+                c.Direccion = leerDireccion();
+                listar();
+            }
+
+        }
+        void eliminar()
+        {
+            int cod = leerCodigo();
+            Cliente c = ac.buscar(cod);
+
+            if (c != null)
+            {
+                if (confirmar("Deseas Eliminarlo?") == DialogResult.Yes)
+                {
+                    ac.eliminar(c);
+                    listar();
+                }
+            }
+        }
+        void consultar()
+        {
+            int cod = leerCodigo();
+            Cliente x = ac.buscar(cod);
+            if (x != null)
+            {
+                txtNombre.Text = x.Nombre;
+                txtApellidos.Text = x.Apellidos;
+                txtTelefono.Text = x.Telefono;
+                txtDireccion.Text = x.Direccion;
+                txtFecha.Text = x.Fecha;
+            }
+            else
+            {
+                mensaje("Estudiante NO Registrado");
+                limpiar();
+                txtcodigo.Clear();
+                txtcodigo.Focus();
+            }
+        }
+        void cancelar()
+        {
+            limpiar();
+            habilitarEntradas(false);
+            habilitarBotones(true);
+            txtcodigo.Clear();
+            txtcodigo.Enabled = false;
+            btnbuscar.Enabled = false;
+        }
+        void listar()
+        {
+            dgCliente.Rows.Clear();
+            for (int i = 0; i < ac.tamanio(); i++)
+            {
+                Cliente x = ac.obtener(i);
+                dgCliente.Rows.Add(x.Codest, x.Nombre, x.Apellidos, x.Telefono, x.Fecha, x.Direccion);
+            }
+        }
+
+        private void btnaceptar_Click_1(object sender, EventArgs e)
+        {
+            if (OPERACION == 1)
+            {
+                ingresar();
+
+            }
+            else if (OPERACION == 3)
+            {
+                modificar();
+            }
+            else if (OPERACION == 4)
+            {
+                eliminar();
+            }
+        }
+
+        private void btnconsultar_Click(object sender, EventArgs e)
+        {
+            OPERACION = 2;
+            txtcodigo.Enabled = true;
+            btnbuscar.Enabled = true;
+            btncancelar.Enabled = true;
+        }
+
+        private void btnmodificar_Click(object sender, EventArgs e)
+        {
+            OPERACION = 3;
+            txtcodigo.Enabled = true;
+            txtcodigo.Clear();
+            txtcodigo.Focus();
+            btnbuscar.Enabled = true;
+            btncancelar.Enabled = true;
+        }
+
+        private void btneliminar_Click(object sender, EventArgs e)
+        {
+            OPERACION = 4;
+            txtcodigo.Enabled = true;
+            txtcodigo.Clear();
+            txtcodigo.Focus();
+            btnbuscar.Enabled = true;
+            btncancelar.Enabled = true;
+        }
+
+        private void btncancelar_Click(object sender, EventArgs e)
+        {
+            cancelar();
+        }
+    }
+}
