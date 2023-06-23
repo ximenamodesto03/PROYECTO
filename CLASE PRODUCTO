@@ -1,0 +1,380 @@
+ARREGLOPRODUCTO
+namespace Proyecto
+{
+    class ArregloProducto
+    {
+        //Atributos
+        List<Producto> pro;
+        
+        //Constructor
+        public ArregloProducto() 
+        {
+            pro = new List<Producto>();
+            ingresar(new Producto(001, "Fideos", "Pastas", "10", "Gramos", "50"));
+            ingresar(new Producto(002, "Leche", "Lacteos", "20", "Litros", "40"));
+
+        }
+        public void ingresar(Producto x)
+        {
+            pro.Add(x);
+        }
+        public void eliminar(Producto x)
+        {
+            pro.Remove(x);
+        }
+        public int tamanio()
+        {
+            return pro.Count;
+        }
+        public Producto obtener(int pos)
+        {
+            return pro[pos];
+        }
+        public int generarCodigo()
+        {
+            if (tamanio() == 0)
+            {
+                return 001;
+            }
+            else
+            {
+                return obtener(tamanio() - 1).Codest + 1;
+            }
+        }
+        public Producto buscar(int cod)
+        {
+            Producto x = null;
+            for (int i = 0; i < tamanio(); i++)
+            {
+                if (obtener(i).Codest == cod)
+                {
+                    return obtener(i);
+                };
+            }
+            return x;
+        }
+    }
+}
+PRODUCTO
+namespace Proyecto
+{
+    class Producto
+    {
+        private int codest;
+        private string descripcion;
+        private string categoria;
+        private string precio;
+        private string unidad;
+        private string stock;
+
+        public Producto()
+        {      
+        }
+
+        public Producto(int codest, string descripcion, string categoria, string precio, string unidad, string stock)
+        {
+            this.codest = codest;
+            this.descripcion = descripcion;
+            this.categoria = categoria;
+            this.precio = precio;
+            this.unidad = unidad;
+            this.stock = stock;
+        }
+        public int Codest
+        { 
+            get { return this.codest; }
+            set { this.codest = value; }
+        }
+        public string Descripcion
+        {
+            get { return this.descripcion; }
+            set { this.descripcion = value; }
+        }
+        public string Categoria
+        {
+            get { return this.categoria; }
+            set { this.categoria = value; }
+        }
+        public string Precio
+        {
+            get { return this.precio; }
+            set { this.precio = value; }
+        }
+        public string Unidad
+        {
+            get { return this.unidad; }
+            set { this.unidad = value; }
+        }
+        public string Stock
+        {
+            get { return this.stock; }
+            set { this.stock = value; }
+        }
+    }
+}
+
+FORMULARIO AL DARLE AL BOTÓN BUSCAR
+namespace Proyecto
+{
+    public partial class FrmProducto : Form
+    {
+        ArregloProducto ap = new ArregloProducto();
+        int OPERACION = 0;
+        //1- adicionar
+        //2- consultar
+        //3- modificar
+        //4- eliminar
+
+        public FrmProducto()
+        {
+            InitializeComponent();
+            listar();
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnBuscar_Click(object sender, EventArgs e)
+        {
+            consultar();
+            if (OPERACION == 3)
+            {
+                habilitarEntradas(true);
+                btnAceptar.Enabled = true;
+                txtCodigo.Enabled = false;
+            }
+            else if (OPERACION == 4)
+            {
+                btnAceptar.Enabled = true;
+            }
+        }
+
+        //CREAR VARIABLES GLOBALES
+        private void btnIngresar_Click(object sender, EventArgs e)
+        {
+            habilitarEntradas(true);
+            limpiar();
+            habilitarBotones(false);
+            txtCodigo.Text = ap.generarCodigo().ToString();
+            btnAceptar.Enabled = true;
+            btnCancelar.Enabled = true;
+            OPERACION = 1;
+        }
+
+        //DEFINIR METODOS
+        //METODOS DE MANTENIMIENTO
+
+        void modificar()
+        {
+            int cod = leerCodigo();
+            Producto p = ap.buscar(cod);
+            if (p != null)
+            {
+                p.Descripcion = leerDescripcion();
+                p.Categoria = leerCategoria();
+                p.Precio = leerPrecio();
+                p.Unidad = leerUnidad();
+                p.Stock = leerStock();
+                listar();
+            }
+        }
+        void ingresar()
+        {
+            int cod;
+            string des, cat, pre, uni, stc;
+            cod = leerCodigo();
+            des = leerDescripcion();
+            if (des.Length == 0)
+            {
+                mensaje("!!!Ingrese Descripcion!!!");
+                txtDescripcion.Focus();
+            }
+            else
+            {
+                cat = leerCategoria();
+                pre = leerPrecio();
+                uni = leerUnidad();
+                stc = leerStock();
+                ap.ingresar(new Producto(cod, des, cat, pre, uni, stc));
+                listar();
+                limpiar();
+                txtCodigo.Text = ap.generarCodigo().ToString();
+            }
+        }
+
+        void cancelar()
+        {
+            limpiar();
+            habilitarEntradas(false);
+            habilitarBotones(true);
+            txtCodigo.Clear();
+            txtCodigo.Enabled = false;
+            btnBuscar.Enabled = false;
+        }
+
+        void eliminar()
+        {
+            int cod = leerCodigo();
+            Producto p = ap.buscar(cod);
+
+            if (p != null)
+            {
+                if (confirmar("¿Deseas eliminarlo?") == DialogResult.Yes)
+                {
+                    ap.eliminar(p);
+                    listar();
+                }
+            }
+        }
+
+        void consultar()
+        {
+            int cod = leerCodigo();
+            Producto x = ap.buscar(cod);
+            if (x != null)
+            {
+                txtDescripcion.Text = x.Descripcion;
+                txtCategoria.Text = x.Categoria;
+                txtPrecio.Text = x.Precio;
+                txtUnidad.Text = x.Unidad;
+                txtStock.Text = x.Stock;
+            }
+            else
+            {
+                mensaje("Producto No Registrado");
+                limpiar();
+                txtCodigo.Clear();
+                txtCodigo.Focus();
+            }
+        }
+
+        void listar()
+        {
+            dgProductos.Rows.Clear();
+            for (int i = 0; i < ap.tamanio(); i++)
+            {
+                Producto x = ap.obtener(i);
+                dgProductos.Rows.Add(x.Codest, x.Descripcion, x.Categoria, x.Precio, x.Unidad, x.Stock);
+            }
+        }
+
+
+        //MÉTODOS DE ENTRADA
+
+        int leerCodigo()
+        {
+            return int.Parse(txtCodigo.Text);
+        }
+        string leerDescripcion()
+        {
+            return txtDescripcion.Text.Trim();
+        }
+        string leerCategoria()
+        {
+            return txtCategoria.Text.Trim();
+        }
+        string leerPrecio()
+        {
+            return txtPrecio.Text.Trim();
+        }
+        string leerUnidad()
+        {
+            return txtUnidad.Text.Trim();
+        }
+        string leerStock()
+        {
+            return txtStock.Text.Trim();
+        }
+
+        //METODOS DE LA GUI
+        void habilitarEntradas(bool act)
+        {
+            txtDescripcion.Enabled = act;
+            txtCategoria.Enabled = act;
+            txtPrecio.Enabled = act;
+            txtUnidad.Enabled = act;
+            txtStock.Enabled = act; 
+        }
+        void habilitarBotones(bool act)
+        {
+            btnIngresar.Enabled = act;
+            btnModificar.Enabled = act;
+            btnConsultar.Enabled = act;
+            btnEliminar.Enabled = act;
+            btnAceptar.Enabled = act;
+            btnCancelar.Enabled = act;
+        }
+        void limpiar()
+        {
+            txtDescripcion.Clear();
+            txtCategoria.Clear();
+            txtPrecio.Clear();
+            txtUnidad.Clear();
+            txtStock.Clear();
+            txtDescripcion.Focus();
+        }
+
+        //OTROS METODOS
+
+        void mensaje(string msg)
+        {
+            MessageBox.Show(this, msg, "Aviso");
+        }
+        DialogResult confirmar(string msg)
+        {
+            return MessageBox.Show(this, msg, "Confirmar", MessageBoxButtons.YesNo);
+        }
+
+        private void btnAceptar_Click(object sender, EventArgs e)
+        {
+            if (OPERACION == 1)
+            {
+                ingresar();
+
+            }
+            else if (OPERACION == 3)
+            {
+                modificar();
+            }
+            else if (OPERACION == 4)
+            {
+                eliminar();
+            }
+        }
+
+        private void btnCancelar_Click(object sender, EventArgs e)
+        {
+            cancelar();
+        }
+
+        private void btnEliminar_Click(object sender, EventArgs e)
+        {
+            OPERACION = 4; 
+            txtCodigo.Enabled = true;
+            txtCodigo.Clear();
+            txtCodigo.Focus();
+            btnBuscar.Enabled = true;
+            btnCancelar.Enabled = true;
+        }
+
+        private void btnModificar_Click(object sender, EventArgs e)
+        {
+            OPERACION = 3;
+            txtCodigo.Enabled = true;
+            txtCodigo.Clear();
+            txtCodigo.Focus();
+            btnBuscar.Enabled = true;
+            btnCancelar.Enabled = true;
+        }
+
+        private void btnConsultar_Click(object sender, EventArgs e)
+        {
+            OPERACION = 2;
+            txtCodigo.Enabled = true;
+            btnBuscar.Enabled = true;
+            btnCancelar.Enabled = true;
+        }
+    }
+}
