@@ -1,0 +1,80 @@
+ARREGLOVENTA
+namespace Proyecto
+{
+    internal class ArregloVenta
+    {
+        //ATRIBUTOS
+        List<Venta> ven;
+
+        //CONSTRUCTOR
+        public ArregloVenta()
+        {
+            ven = new List<Venta>();
+            ingresar(new Venta(200, "01/08/2004", "23:04:30", "530", ""));
+            ingresar(new Venta(201, "21/10/2000", "13:29:19", "430", ""));
+        }
+        public void ingresar(Venta x)
+        {
+            ven.Add(x);
+        }
+        public void eliminar(Venta x)
+        {
+            ven.Remove(x);
+        }
+        public int tamanio()
+        {
+            return ven.Count;
+        }
+    }
+}
+VENTA
+namespace Proyecto
+{
+    class Venta
+    {
+        public int numero;  
+        public string fecha;
+        public string hora;
+        public string monto;
+        public string descuento;
+
+        public Venta()
+        {
+        }
+
+        public Venta(int numero, string fecha, string hora, string monto, string descuento)
+        {
+            this.numero = numero;
+            this.fecha = fecha;
+            this.hora = hora;
+            this.monto = monto;
+            this.descuento = descuento;
+        }
+        public int Numero
+        {
+            get { return this.numero; }
+            set { this.numero = value; }
+        }
+        public string Fecha
+        { 
+            get { return this.fecha; } 
+            set { this.fecha = value; } 
+        }
+        public string Hora
+        { 
+            get { return this.hora; } 
+            set { this.hora = value; } 
+        }
+        public string Monto
+        { 
+            get { return this.monto; }
+            set { this.monto = value;} 
+        }
+        public string Descuento
+        {
+            get { return this.descuento; }
+            set { this.descuento = value; }
+        }
+    }
+}
+FORMULARIO AL DARLE AL BOTÓN BUSCAR
