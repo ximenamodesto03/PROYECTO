@@ -1,0 +1,60 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Proyecto
+{
+    class ArregloCliente
+    {
+        //ATRIBUTOS
+        List<Cliente> cli;
+        //CONSTRUCTOR
+        public ArregloCliente() 
+        {
+            cli = new List<Cliente>();
+            ingresar(new Cliente(400, "Henry", "Palomino", "1234567", "03/08","Comas"));
+            ingresar(new Cliente(401, "Ana", "Arellano", "1234568", "12/04","Rimac" ));
+        }
+        public void ingresar(Cliente x)
+        {
+            cli.Add(x);
+        }
+        public void eliminar(Cliente x)
+        {
+            cli.Remove(x);
+        }
+        public int tamanio()
+        {
+            return cli.Count;
+        }
+        public Cliente obtener(int pos) 
+        { 
+            return cli[pos];
+        }
+        public int generarCodigo()
+        {
+            if (tamanio() == 0)
+            {
+                return 400;
+            }
+            else
+            {
+                return obtener(tamanio() - 1).Codest + 1;
+            }
+        }
+        public Cliente buscar(int cod)
+        {
+            Cliente x = null;
+            for (int i = 0; i < tamanio(); i++)
+            {
+                if (obtener(i).Codest == cod)
+                {
+                    return obtener(i);
+                };
+            }
+            return x;
+        }
+    }
+}
