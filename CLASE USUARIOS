@@ -1,0 +1,405 @@
+ARREGLOUSUARIOS
+namespace Proyecto
+{
+    class ArregloUsuarios
+    {
+        //ATRIBUTOS
+        List<Usuarios> usu;
+        //CONSTRUCTOR
+        public ArregloUsuarios() 
+        {
+            usu = new List<Usuarios>();
+            ingresar(new Usuarios(300, "Alex", "Castle", "768801", 1000, "Comas", "Administrador"));
+            ingresar(new Usuarios(301, "Mario", "Hijar", "768802", 1001, "Rimac", "Vendedor"));
+        }
+        public void ingresar(Usuarios x)
+        {
+            usu.Add(x);
+        }
+        public void eliminar(Usuarios x)
+        {
+            usu.Remove(x);
+        }
+        public int tamanio()
+        {
+            return usu.Count;
+        }
+        public Usuarios obtener(int pos)
+        { 
+            return usu[pos];    
+        }
+        public int generarCodigo()
+        {
+            if (tamanio() == 0)
+            {
+                return 300;
+            }
+            else
+            {
+                return obtener(tamanio() - 1).Codest + 1;
+            }
+        }
+        public int generarClave()
+        {
+            if (tamanio() == 0)
+            {
+                return 1000;
+            }
+            else
+            {
+                return obtener(tamanio() - 1).Codest + 1;
+            }
+        }
+        public Usuarios buscar(int cod)
+        {
+            Usuarios x = null;
+            for (int i = 0; i < tamanio(); i++)
+            {
+                if (obtener(i).Codest == cod)
+                {
+                    return obtener(i);
+                };
+            }
+            return x;
+        }
+    }
+}
+USUARIOS
+namespace Proyecto
+{
+    class Usuarios
+    {
+        private int codest;
+        private string nombre;
+        private string apellidos;
+        private string telefono;
+        private int clave;
+        private string direccion;
+        private string tipo;
+
+        public Usuarios()
+        { 
+        }
+
+        public Usuarios(int codest, string nombre, string apellidos, string telefono, int clave, string direccion, string tipo)
+        {
+            this.codest = codest;
+            this.nombre = nombre;
+            this.apellidos = apellidos;
+            this.telefono = telefono;
+            this.clave = clave;
+            this.direccion = direccion;
+            this.tipo = tipo;
+        }
+        public int Codest
+        {
+            get { return this.codest; }
+            set { this.codest = value; }
+        }
+        public string Nombre
+        {
+            get { return this.nombre; }
+            set { this.nombre = value; }
+        }
+        public string Apellidos
+        {
+            get { return this.apellidos; }
+            set { this.apellidos = value; }
+        }
+        public string Telefono
+        {
+            get { return this.telefono; }
+            set { this.telefono = value; }
+        }
+        public int Clave
+        {
+            get { return this.clave; }
+            set { this.clave = value; }
+        }
+        public string Direccion
+        {
+            get { return this.direccion; }
+            set { this.direccion = value; }
+        }
+        public string Tipo
+        {
+            get { return this.tipo; }
+            set { this.tipo = value; }
+        }
+
+    }
+}
+FORMULARIO AL DARLE AL BOTÓN BUSCAR
+namespace Proyecto
+{
+    public partial class FrmUsuarios : Form
+    {
+        ArregloUsuarios au = new ArregloUsuarios();
+        int OPERACION = 0;
+        public FrmUsuarios()
+        {
+            InitializeComponent();
+            listar();
+        }
+
+        //Mètodos de entrada
+        int leerCodigo()
+        {
+            return int.Parse(txtcodigoo.Text);
+        }
+        string leerNombre()
+        {
+            return txtnombree.Text.Trim();
+        }
+        string leerApellidos()
+        {
+            return txtapellidoss.Text.Trim();
+        }
+        string leerTelefono()
+        {
+            return txttelefonoo.Text.Trim();
+        }
+        int leerClave()
+        {
+            return int.Parse(txtclave.Text);
+        }
+        string leerDireccion()
+        {
+            return txtdireccionn.Text.Trim();
+        }
+        string leerTipo()
+        {
+            return txttipo.Text.Trim();
+        }
+        //Metodos de la GUI
+        void habilitarEntradas(bool act)
+        {
+            txtnombree.Enabled = act;
+            txtapellidoss.Enabled = act;
+            txttelefonoo.Enabled = act;
+            txtclave.Enabled = act;
+            txtdireccionn.Enabled = act;
+            txttipo.Enabled = act;
+        }
+        void habilitarBotones(bool act)
+        {
+            btningresarr.Enabled = act;
+            btnmodificarr.Enabled = act;
+            btnconsultarr.Enabled = act;
+            btneliminarr.Enabled = act;
+            btnaceptarr.Enabled = !act;
+            btncancelarr.Enabled = !act;
+        }
+        void limpiar()
+        {
+            txtnombree.Clear();
+            txtapellidoss.Clear();
+            txttelefonoo.Clear();
+            txtclave.Clear();
+            txtdireccionn.Clear();
+            txttipo.Clear();
+            txtnombree.Focus();
+        }
+        //Otros Metodos
+        void mensaje(string msg)
+        {
+            MessageBox.Show(this, msg, "Aviso");
+        }
+        DialogResult confirmar(string msg)
+        {
+            return MessageBox.Show(this, msg, "Confirmar", MessageBoxButtons.YesNo);
+        }
+        private void btnAceptar_Click(object sender, EventArgs e)
+        {
+            if (OPERACION == 1)
+            {
+                ingresar();
+
+            }
+            else if (OPERACION == 3)
+            {
+                modificar();
+            }
+            else if (OPERACION == 4)
+            {
+                eliminar();
+            }
+        }
+        void ingresar()
+        {
+            int cod, cla;
+            string nom, ape, tel, dir, tip;
+            cod = leerCodigo();
+            nom = leerNombre();
+            ape = leerApellidos();
+            if (nom.Length == 0)
+            {
+                mensaje("!!!Ingrese Nombre!!!");
+                txtnombree.Focus();
+            }
+            else if (ape.Length == 0)
+            {
+                mensaje("!!!Ingrese Apellidos!!!");
+                txtapellidoss.Focus();
+            }
+            else
+            {
+                tel = leerTelefono();
+                cla = leerClave();
+                dir = leerDireccion();
+                tip = leerTipo();
+                au.ingresar(new Usuarios(cod, nom, ape, tel, cla, dir, tip));
+                listar();
+                limpiar();
+                txtcodigoo.Text = au.generarCodigo().ToString();
+            }
+
+        }
+        void modificar()
+        {
+            int cod = leerCodigo();
+            Usuarios u = au.buscar(cod);
+            if (u != null)
+            {
+                u.Nombre = leerNombre();
+                u.Apellidos = leerApellidos();
+                u.Telefono = leerTelefono();
+                u.Clave = leerClave();
+                u.Direccion = leerDireccion();
+                u.Tipo = leerTipo();
+                listar();
+            }
+        }
+        void eliminar()
+        {
+            int cod = leerCodigo();
+            Usuarios u = au.buscar(cod);
+
+            if (u != null)
+            {
+                if (confirmar("Deseas Eliminarlo?") == DialogResult.Yes)
+                {
+                    au.eliminar(u);
+                    listar();
+                }
+            }
+        }
+        void consultar()
+        {
+            int cod = leerCodigo();
+            Usuarios x = au.buscar(cod);
+            if (x != null)
+            {
+                txtnombree.Text = x.Nombre;
+                txtapellidoss.Text = x.Apellidos;
+                txttelefonoo.Text = x.Telefono;
+                txtdireccionn.Text = x.Direccion;
+                txttipo.Text = x.Tipo;
+            }
+            else
+            {
+                mensaje("Usuario NO Registrado");
+                limpiar();
+                txtcodigoo.Clear();
+                txtcodigoo.Focus();
+            }
+        }
+        void cancelar()
+        {
+            limpiar();
+            habilitarEntradas(false);
+            habilitarBotones(true);
+            txtcodigoo.Clear();
+            txtcodigoo.Enabled = false;
+            btnbuscarr.Enabled = false;
+        }
+        void listar()
+        {
+            dgUsuario.Rows.Clear();
+            for (int i = 0; i < au.tamanio(); i++)
+            {
+                Usuarios x = au.obtener(i);
+                dgUsuario.Rows.Add(x.Codest, x.Nombre, x.Apellidos, x.Telefono, x.Clave, x.Direccion, x.Tipo);
+            }
+        }
+
+
+        private void btnbuscarr_Click(object sender, EventArgs e)
+        {
+            consultar();
+            if (OPERACION == 3)
+            {
+                habilitarEntradas(true);
+                btnaceptarr.Enabled = true;
+                txtcodigoo.Enabled = false;
+            }
+            else if (OPERACION == 4)
+            {
+                btnaceptarr.Enabled = true;
+            }
+        }
+
+        //CREAR VARIABLES GLOBALES
+        private void btningresarr_Click(object sender, EventArgs e)
+        {
+            habilitarEntradas(true);
+            limpiar();
+            habilitarBotones(false);
+            txtcodigoo.Text = au.generarCodigo().ToString();
+            txtclave.Text = au.generarClave().ToString();
+            btnaceptarr.Enabled = true;
+            btncancelarr.Enabled = true;
+            OPERACION = 1;
+        }
+
+        private void btnconsultarr_Click(object sender, EventArgs e)
+        {
+            OPERACION = 2;
+            txtcodigoo.Enabled = true;
+            btnbuscarr.Enabled = true;
+            btncancelarr.Enabled = true;
+        }
+
+        private void btnmodificarr_Click(object sender, EventArgs e)
+        {
+            OPERACION = 3;
+            txtcodigoo.Enabled = true;
+            txtcodigoo.Clear();
+            txtcodigoo.Focus();
+            btnbuscarr.Enabled = true;
+            btncancelarr.Enabled = true;
+        }
+
+        private void btneliminarr_Click(object sender, EventArgs e)
+        {
+            OPERACION = 4;
+            txtcodigoo.Enabled = true;
+            txtcodigoo.Clear();
+            txtcodigoo.Focus();
+            btnbuscarr.Enabled = true;
+            btncancelarr.Enabled = true;
+        }
+
+        private void btncancelarr_Click(object sender, EventArgs e)
+        {
+            cancelar();
+        }
+
+        private void btnaceptarr_Click(object sender, EventArgs e)
+        {
+            if (OPERACION == 1)
+            {
+                ingresar();
+
+            }
+            else if (OPERACION == 3)
+            {
+                modificar();
+            }
+            else if (OPERACION == 4)
+            {
+                eliminar();
+            }
+        }
+    }
+}
