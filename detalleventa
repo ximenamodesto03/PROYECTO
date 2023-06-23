@@ -1,0 +1,54 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Proyecto
+{
+    class DetalleVenta
+    {
+        public int numerocom;
+        public int codpro;
+        public string precio;
+        public string cantidad;
+        public string subtotal;
+        
+        public DetalleVenta()
+        {
+        }
+        public DetalleVenta(int numerocom, int codpro, string precio, string cantidad, string subtotal)
+        {
+            this.numerocom = numerocom;
+            this.codpro = codpro;
+            this.precio = precio;
+            this.cantidad = cantidad;
+            this.subtotal = subtotal;
+        }
+        public int Numercom
+        {
+            get { return this.numerocom; }
+            set { this.numerocom = value; }
+        }
+        public int Codpro
+        {
+            get { return this.codpro; }
+            set { this.codpro = value; }
+        }
+        public string Precio
+        {
+            get { return this.precio; }
+            set { this.precio = value; }
+        }
+        public string Cantidad
+        {
+            get { return this.cantidad; }
+            set { this.cantidad = value; }
+        }
+        public string Subtotal
+        {
+            get { return this.subtotal; }
+            set { this.subtotal = value; }
+        }
+    }
+}
